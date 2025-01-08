@@ -173,8 +173,8 @@ contract UomiAgent is
      */
     function callAgent(
         uint256 nftId,
-        bytes calldata inputCidFile,
-        bytes calldata inputData
+        string calldata inputCidFile,
+        string calldata inputData
     ) external payable  {
         
         Agent memory $ = agents[nftId];
@@ -193,13 +193,13 @@ contract UomiAgent is
             requestId,
             nftId,
             msg.sender,
-            inputData,
-            inputCidFile,
+            bytes(inputData),
+            bytes(inputCidFile),
             $.minValidatiors,
             $.minBlocks
         );
 
-        emit RequestSent(msg.sender, requestId, inputData, nftId);
+        emit RequestSent(msg.sender, requestId, bytes(inputData), nftId);
     }
 
 
