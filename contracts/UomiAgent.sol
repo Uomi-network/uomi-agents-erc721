@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./IEngine.sol";
+import "./IIpfs.sol";
 
 /**
  * @title UomiAgent
@@ -19,14 +20,15 @@ contract UomiAgent is
     ERC721URIStorage,
     AccessControl
 {
+    // ============ Global Variables ============
+    
+    IIPFSStorage public ipfsStorage;
+
     // ============ Constants ============
 
     /// @dev Address of the UomiEngine precompile
-    address private constant PRECOMPILE_ADDRESS_UOMI_ENGINE =
-        0x00000000000000000000000000000000756f6D69;
-
-    address private constant PRECOMPILE_ADDRESS_IPFS =
-        0x00000000000000000000000000000000756f6D69;
+    IEngine private constant PRECOMPILE_ADDRESS_UOMI_ENGINE =
+        IEngine(0x00000000000000000000000000000000756f6D69);
 
     /// @dev Maximum number of AGENTs that can be minted
     uint16 public constant MAX_AGENTS = 1024;
@@ -105,9 +107,11 @@ contract UomiAgent is
      * @dev Initializes the contract with default admin and minter roles
      */
     constructor(
-        address defaultAdmin
+        address defaultAdmin,
+        IIPFSStorage _ipfsStorage
     ) ERC721("UomiAgent", "AGENT") {
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
+        ipfsStorage = _ipfsStorage;
     }
 
     // ============ External Functions ============
@@ -134,6 +138,8 @@ contract UomiAgent is
         agents[currentTokenId] = agent;
 
         uint256 tokenId = currentTokenId++;
+        //pin agent CID to IPFS
+        ipfsStorage.pinAgent(agent.agentCID, tokenId);
         _safeMint(to, tokenId);
     }
 
@@ -151,6 +157,10 @@ contract UomiAgent is
            msg.sender == ownerOf(tokenId),
             "UomiAgent: caller is not owner"
         );
+
+        if (keccak256(abi.encodePacked(agent.agentCID)) != keccak256(abi.encodePacked(agents[tokenId].agentCID))) {
+            ipfsStorage.pinAgent(agent.agentCID, tokenId);
+        }
 
         agents[tokenId] = agent;
     }
@@ -179,9 +189,7 @@ contract UomiAgent is
             payable(owner).transfer(msg.value);
         }
 
-        IEngine engine = IEngine(PRECOMPILE_ADDRESS_UOMI_ENGINE);
-
-        engine.call_agent(
+        PRECOMPILE_ADDRESS_UOMI_ENGINE.call_agent(
             requestId,
             nftId,
             msg.sender,
@@ -215,10 +223,8 @@ contract UomiAgent is
         uint256 _requestId
     ) external view returns (AgentOutput memory) {
         AgentOutput memory output;
-       
-        IEngine engine = IEngine(PRECOMPILE_ADDRESS_UOMI_ENGINE);
 
-        (output.output, output.totalExecutions, output.totalConsensus) = engine.get_output(_requestId);
+        (output.output, output.totalExecutions, output.totalConsensus) = PRECOMPILE_ADDRESS_UOMI_ENGINE.get_output(_requestId);
 
         return output;
     }
