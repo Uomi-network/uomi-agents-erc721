@@ -47,7 +47,7 @@ module.exports = {
       },
     },
     testnet: {
-      url: `http://127.0.0.1:1235/`,
+      url: ``,
       accounts: [process.env.PRIVATE_KEY],
     },
     uomi: {

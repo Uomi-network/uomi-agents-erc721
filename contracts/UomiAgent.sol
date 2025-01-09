@@ -107,11 +107,8 @@ contract UomiAgent is
      * @dev Initializes the contract with default admin and minter roles
      */
     constructor(
-        address defaultAdmin,
-        IIPFSStorage _ipfsStorage
     ) ERC721("UomiAgent", "AGENT") {
-        _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
-        ipfsStorage = _ipfsStorage;
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
     // ============ External Functions ============
@@ -139,8 +136,14 @@ contract UomiAgent is
 
         uint256 tokenId = currentTokenId++;
         //pin agent CID to IPFS
-        ipfsStorage.pinAgent(agent.agentCID, tokenId);
+        ipfsStorage.pinAgent(agent.agentCID, tokenId, msg.sender);
         _safeMint(to, tokenId);
+    }
+
+    function setIpfsStorage(
+        IIPFSStorage _ipfsStorage
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        ipfsStorage = _ipfsStorage;
     }
 
     /**
@@ -151,7 +154,8 @@ contract UomiAgent is
      */
     function updateAgent(
         uint256 tokenId,
-        Agent memory agent
+        Agent memory agent,
+        address owner
     ) public {
         require(
            msg.sender == ownerOf(tokenId),
@@ -159,7 +163,7 @@ contract UomiAgent is
         );
 
         if (keccak256(abi.encodePacked(agent.agentCID)) != keccak256(abi.encodePacked(agents[tokenId].agentCID))) {
-            ipfsStorage.pinAgent(agent.agentCID, tokenId);
+            ipfsStorage.pinAgent(agent.agentCID, tokenId, owner);
         }
 
         agents[tokenId] = agent;
@@ -227,6 +231,10 @@ contract UomiAgent is
         (output.output, output.totalExecutions, output.totalConsensus) = PRECOMPILE_ADDRESS_UOMI_ENGINE.get_output(_requestId);
 
         return output;
+    }
+
+    function exists(uint256 tokenId) public view returns (bool) {
+        return _ownerOf(tokenId) != address(0);
     }
 
     /**
