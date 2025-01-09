@@ -1,7 +1,7 @@
 const ethers = require('ethers');
 
 // Indirizzo del contratto da configurare
-const CONTRACT_ADDRESS = "0xe0ae768C7aB413a10d07fDe2aC841C9F63793DD4";
+const CONTRACT_ADDRESS = "0x687528e4BC4040DC9ADBA05C1f00aE3633faa731";
 
 // ABI del contratto (importato dal file)
 const CONTRACT_ABI = [
@@ -1141,7 +1141,7 @@ const CONTRACT_ABI = [
   ];
 
 
-  const ipfs = "0xA1C6E3B636B2BBD007bcDBe53a0d3a0641C78bAB"
+  const ipfs = "0xfB13f1A798a1aa6D8359fE4bEAAeF1FD04a8dCD4"
 
 class UomiAgentInteractor {
     constructor(providerUrl, privateKey) {
@@ -1264,12 +1264,12 @@ async function main() {
         // const createTx = await interactor.createAgent(newAgent, recipient);
         // console.log("Agente creato:", createTx.transactionHash);
         // // Esempio di chiamata a un agente
-        // const callTx = await interactor.callAgent(1, "", "ciao");
-        // console.log("Agente chiamato:", callTx.transactionHash);
+        const callTx = await interactor.callAgent(1, "", "ciao");
+        console.log("Agente chiamato:", callTx.transactionHash);
 
         //get agent output
-        const output = await interactor.getAgentOutput(1);
-        console.log("Output dell'agente:", output);
+        // const output = await interactor.getAgentOutput(1);
+        // console.log("Output dell'agente:", output);
 
     } catch (error) {
         console.error("Errore:", error);
