@@ -1138,10 +1138,10 @@ const CONTRACT_ABI = [
       "stateMutability": "nonpayable",
       "type": "function"
     }
-  ];
+];
 
 
-  const ipfs = "0xfB13f1A798a1aa6D8359fE4bEAAeF1FD04a8dCD4"
+const ipfs = "0xfB13f1A798a1aa6D8359fE4bEAAeF1FD04a8dCD4"
 
 class UomiAgentInteractor {
     constructor(providerUrl, privateKey) {
