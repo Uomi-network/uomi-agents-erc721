@@ -6,7 +6,7 @@ async function main() {
 
   try {
     const setTx = await interactor.callAgent(1, "", "Hello World!");
-    console.log("Agent deployed correctly:", setTx.transactionHash);
+    console.log("Agent run request sent correctly:", setTx.transactionHash);
   } catch (error) {
       console.error("Error:", error);
   }
