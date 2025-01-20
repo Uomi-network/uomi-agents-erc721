@@ -12,7 +12,7 @@ async function main() {
     tags: ["test", "demo"],
     price: 0,
     minValidators: 1,
-    minBlocks: 2000,
+    minBlocks: 50,
     agentCID: "bafkreihw3bk5wfh7sxrumbn3ul2tthddy55ryvrp443dibvd2zo2enmdbm"
   };
   console.log("Creating agent:", newAgent);
