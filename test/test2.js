@@ -1139,7 +1139,7 @@ const CONTRACT_ABI = [
       "stateMutability": "nonpayable",
       "type": "function"
     }
-  ];
+];
 
 
   const ipfs = "0x2C236e3f14bC72242ba0e9CDDb367331A9E0102C"
