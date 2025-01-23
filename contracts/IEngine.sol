@@ -29,5 +29,5 @@ interface IEngine {
      *         - A uint256 representing the first additional output value.
      *         - A uint256 representing the second additional output value.
      */
-    function get_output(uint256 requestId) external view returns (bytes memory, uint256, uint256);
+    function get_agent_output(uint256 requestId) external view returns (bytes memory, uint256, uint256);
 }

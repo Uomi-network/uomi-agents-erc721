@@ -31,15 +31,9 @@ contract UomiAgent is
         IEngine(0x00000000000000000000000000000000756f6D69);
 
     /// @dev Maximum number of AGENTs that can be minted
-    uint16 public constant MAX_AGENTS = 1024;
+    uint16 public MAX_AGENTS = 1024;
 
-    uint64 public constant FIXED_PRICE = 10 ether; //fixed price just for testnet
-
-    string constant SVG_PART1 = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800"><rect width="800" height="800" fill="#0d0d1f" /><defs><radialGradient id="center-glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#00fff0" stop-opacity="0.2" /><stop offset="70%" stop-color="#001f3f" stop-opacity="0.1" /><stop offset="100%" stop-color="#000000" /></radialGradient><linearGradient id="neon-detail" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00fff0" /><stop offset="100%" stop-color="#ff00c8" /></linearGradient></defs><rect width="800" height="800" fill="url(#center-glow)" /><g><circle cx="400" cy="400" r="60" fill="#00fff0" opacity="0.8" /><circle cx="400" cy="400" r="50" fill="#1a1a2e" /><circle cx="400" cy="400" r="40" fill="#ff007e" opacity="0.6" /><circle cx="400" cy="400" r="30" fill="#00fff0" opacity="0.4" /><line x1="400" y1="400" x2="0" y2="200" stroke="#00fff0" stroke-width="3" opacity="0.4" /><line x1="400" y1="400" x2="800" y2="200" stroke="#ff00c8" stroke-width="3" opacity="0.4" /><line x1="400" y1="400" x2="0" y2="600" stroke="#ff00c8" stroke-width="3" opacity="0.4" /><line x1="400" y1="400" x2="800" y2="600" stroke="#00fff0" stroke-width="3" opacity="0.4" /><line x1="400" y1="400" x2="200" y2="0" stroke="#00c3ff" stroke-width="2" opacity="0.5" /><line x1="400" y1="400" x2="600" y2="0" stroke="#ff00c8" stroke-width="2" opacity="0.5" /><line x1="400" y1="400" x2="200" y2="800" stroke="#00fff0" stroke-width="2" opacity="0.5" /><line x1="400" y1="400" x2="600" y2="800" stroke="#ff007e" stroke-width="2" opacity="0.5" /></g><circle cx="400" cy="400" r="250" fill="none" stroke="#00fff0" stroke-width="2" opacity="0.3" /><circle cx="400" cy="400" r="200" fill="none" stroke="#ff00c8" stroke-width="2" opacity="0.2" /><circle cx="400" cy="400" r="150" fill="none" stroke="#ff007e" stroke-width="2" opacity="0.1" /><line x1="0" y1="400" x2="800" y2="400" stroke="#00fff0" stroke-width="1" opacity="0.2" /><line x1="400" y1="0" x2="400" y2="800" stroke="#ff00c8" stroke-width="1" opacity="0.2" /><text x="50%" y="750" fill="url(#neon-detail)" font-size="24" font-family="Orbitron, Arial, sans-serif" text-anchor="middle">AI AGENT #';
-
-    string constant SVG_PART2 = '</text><text x="50%" y="780" fill="white" font-size="14" font-family="Monospace" text-anchor="middle" opacity="0.5">';
-
-    string constant SVG_PART3 = "</text></svg>";
+    uint128 public constant FIXED_PRICE = 100 ether; //fixed price just for testnet
 
     // ============ Structs ============
 
@@ -113,6 +107,10 @@ contract UomiAgent is
 
     // ============ External Functions ============
 
+    function increaseMaxAgents(uint16 _maxAgents) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        MAX_AGENTS = _maxAgents;
+    }
+
     /**
      * @notice Safely mints a new token
      * @param agent Agent struct
@@ -122,6 +120,11 @@ contract UomiAgent is
         Agent memory agent,
         address to
     ) public payable {
+        require(bytes(agent.name).length > 0 && bytes(agent.name).length <= 16, "Invalid name length");
+        require(bytes(agent.description).length <= 1000, "Description too long");
+        require(agent.minValidatiors > 0, "Invalid validator count");
+        require(agent.minBlocks > 0, "Invalid block count");
+
         currentTokenId += 1;
         if (currentTokenId > MAX_AGENTS) {
             revert MaxAgents();
@@ -134,10 +137,9 @@ contract UomiAgent is
 
         agents[currentTokenId] = agent;
 
-        uint256 tokenId = currentTokenId++;
         //pin agent CID to IPFS
-        ipfsStorage.pinAgent(agent.agentCID, tokenId, msg.sender);
-        _safeMint(to, tokenId);
+        ipfsStorage.pinAgent(agent.agentCID, currentTokenId, msg.sender);
+        _safeMint(to, currentTokenId);
     }
 
     function setIpfsStorage(
@@ -157,6 +159,10 @@ contract UomiAgent is
         Agent memory agent,
         address owner
     ) public {
+        require(bytes(agent.name).length > 0 && bytes(agent.name).length <= 16, "Invalid name length");
+        require(bytes(agent.description).length <= 1000, "Description too long");
+        require(agent.minValidatiors > 0, "Invalid validator count");
+        require(agent.minBlocks > 0, "Invalid block count");
         require(
            msg.sender == ownerOf(tokenId),
             "UomiAgent: caller is not owner"
@@ -180,6 +186,8 @@ contract UomiAgent is
         string calldata inputCidFile,
         string calldata inputData
     ) external payable  {
+
+        require(exists(nftId), "UomiAgent: agent does not exist");
         
         Agent memory $ = agents[nftId];
         if ($.price > 0 && msg.value < $.price) {
@@ -228,7 +236,7 @@ contract UomiAgent is
     ) external view returns (AgentOutput memory) {
         AgentOutput memory output;
 
-        (output.output, output.totalExecutions, output.totalConsensus) = PRECOMPILE_ADDRESS_UOMI_ENGINE.get_output(_requestId);
+        (output.output, output.totalExecutions, output.totalConsensus) = PRECOMPILE_ADDRESS_UOMI_ENGINE.get_agent_output(_requestId);
 
         return output;
     }
@@ -237,33 +245,7 @@ contract UomiAgent is
         return _ownerOf(tokenId) != address(0);
     }
 
-    /**
-     * @dev Generates an SVG image for the given tokenId.
-     * @param tokenId The ID of the token for which to generate the image.
-     * @return A base64-encoded SVG image as a string.
-     * 
-     * This function retrieves the agent associated with the given tokenId,
-     * constructs an SVG image using predefined SVG parts and the agent's name,
-     * and returns the image as a base64-encoded data URI.
-     */
-     function generateImage(uint256 tokenId) internal view returns (string memory) {
-        Agent memory $ = agents[tokenId];
-        
-        bytes memory fullSvg = abi.encodePacked(
-            SVG_PART1,
-            tokenId,
-            SVG_PART2,
-            $.name,
-            SVG_PART3
-        );
-
-        return string(
-            abi.encodePacked(
-                "data:image/svg+xml;base64,",
-                Base64.encode(fullSvg)
-            )
-        );
-    }
+ 
 
     /**
      * @notice Returns the token URI for a given token ID.
@@ -277,7 +259,7 @@ contract UomiAgent is
     function tokenURI(
         uint256 tokenId
     ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
-        string memory image = generateImage(tokenId);
+        string memory image = "https://uomi.ai/testnet/agent-nft.jpg";
         Agent memory $ = agents[tokenId];
         
       return string.concat(

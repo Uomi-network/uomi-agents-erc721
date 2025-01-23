@@ -51,11 +51,23 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
     },
     uomi: {
-      url: `http://localhost:9944/`,
+      url: `https://finney.uomi.ai/`,
       accounts: [process.env.PRIVATE_KEY],
     },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
-  },
+    apiKey: {
+      'uomi': 'empty'
+    },
+    customChains: [
+      {
+        network: "uomi",
+        chainId: 4386,
+        urls: {
+          apiURL: "https://explorer.uomi.ai/api",
+          browserURL: "https://explorer.uomi.ai"
+        }
+      }
+    ]
+  }
 };

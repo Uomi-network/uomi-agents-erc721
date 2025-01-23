@@ -1,8 +1,9 @@
 const ethers = require('ethers');
 
 // Indirizzo del contratto da configurare
-const CONTRACT_ADDRESS = "0x687528e4BC4040DC9ADBA05C1f00aE3633faa731";
-
+const CONTRACT_ADDRESS = "0xDB5e49D00321ACC34C76Af6fa02E7D9766b6e0F5";
+// 0xf5dF1DA452cd8e94845C7A05b20fC161f3A5D522 get agent output
+// 0x0E00eE528C069b1b91E1c98C15d9a267CC98c0c3
 // ABI del contratto (importato dal file)
 const CONTRACT_ABI = [
     {
@@ -1141,7 +1142,7 @@ const CONTRACT_ABI = [
   ];
 
 
-  const ipfs = "0xfB13f1A798a1aa6D8359fE4bEAAeF1FD04a8dCD4"
+  const ipfs = "0x2C236e3f14bC72242ba0e9CDDb367331A9E0102C"
 
 class UomiAgentInteractor {
     constructor(providerUrl, privateKey) {
@@ -1165,7 +1166,7 @@ class UomiAgentInteractor {
                 agentCID: agent.agentCID
             },
             recipient,
-            { value: ethers.utils.parseEther("10") } // Assumendo un prezzo fisso di 0.1 ETH
+            { value: ethers.utils.parseEther("100") } // Assumendo un prezzo fisso di 0.1 ETH
         );
         return await tx.wait();
     }
@@ -1237,8 +1238,8 @@ class UomiAgentInteractor {
 
 // Esempio di utilizzo
 async function main() {
-    const providerUrl = "http://localhost:9944/"; // es. Infura, Alchemy, etc.
-    const privateKey = "0x01ab6e801c06e59ca97a14fc0a1978b27fa366fc87450e0b65459dd3515b7391";
+    const providerUrl = "https://finney.uomi.ai/"; // es. Infura, Alchemy, etc.
+    const privateKey = "";
     
     const interactor = new UomiAgentInteractor(providerUrl, privateKey);
 
@@ -1248,28 +1249,44 @@ async function main() {
         // console.log("Ipfs storage settato:", setTx.transactionHash);
          // Esempio di creazione di un nuovo agente
          const newAgent = {
-            name: "Test Agent",
-            description: "Un agente di test",
+            name: "Whitepaper Agent",
+            description: "Whitepaper Agent is the first agent of Uomi Network, it can explain you the uomi network ecosystem",
             inputSchema: "{}",
             outputSchema: "{}",
-            tags: ["test", "demo"],
+            tags: ["uomi", "chat", "whitepaper"],
             price: 0,
-            minValidators: 1,
-            minBlocks: 2000,
-            agentCID: "bafkreihw3bk5wfh7sxrumbn3ul2tthddy55ryvrp443dibvd2zo2enmdbm"
+            minValidators: 4,
+            minBlocks: 20,
+            agentCID: "bafkreif5jtx37ujddnelg73tuyppzyimal32n6q57ovzkso56g7hcnevye"
         };
 
-        const recipient = "0xaaafb3972b05630fccee866ec69cdadd9bac2771"; // indirizzo del destinatario
+        const recipient = "0x9cE69C61B3D51Ab022e130b453A2c4124f3A9E49"; // indirizzo del destinatario
         //send 10 eth
-        // const createTx = await interactor.createAgent(newAgent, recipient);
-        // console.log("Agente creato:", createTx.transactionHash);
+        const createTx = await interactor.createAgent(newAgent, recipient);
+        console.log("Agente creato:", createTx.transactionHash);
         // // Esempio di chiamata a un agente
-        const callTx = await interactor.callAgent(1, "", "ciao");
-        console.log("Agente chiamato:", callTx.transactionHash);
+        // const callTx = await interactor.callAgent(4, "", "ciao");
+        // console.log("Agente chiamato:", callTx.transactionHash);
 
         //get agent output
-        // const output = await interactor.getAgentOutput(1);
+        // const output = await interactor.getAgentOutput(8);
         // console.log("Output dell'agente:", output);
+
+        //update agent
+
+        // const updatedAgent = {
+        //     name: "Test Agent 0",
+        //     description: "agent test 0 with 1 bad node",
+        //     inputSchema: "{}",
+        //     outputSchema: "{}",
+        //     tags: ["test", "demo"],
+        //     price: 0,
+        //     minValidators: 3,
+        //     minBlocks: 20,
+        //     agentCID: "bafkreihw3bk5wfh7sxrumbn3ul2tthddy55ryvrp443dibvd2zo2enmdbm"
+        // };
+        // const updateTx = await interactor.updateAgent(1, updatedAgent);
+        // console.log("Agente aggiornato:", updateTx.transactionHash);
 
     } catch (error) {
         console.error("Errore:", error);
