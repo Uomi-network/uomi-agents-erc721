@@ -6,14 +6,14 @@ async function main() {
 
   const newAgent = {
     name: "Test Agent",
-    description: "Un agente di test",
+    description: "Un agente di test infinito",
     inputSchema: "{}",
     outputSchema: "{}",
     tags: ["test", "demo"],
     price: 0,
     minValidators: 1,
     minBlocks: 50,
-    agentCID: "bafkreihw3bk5wfh7sxrumbn3ul2tthddy55ryvrp443dibvd2zo2enmdbm"
+    agentCID: "bafkreia5kgxvduqtnikxoqlsbyg43tbb5hzz2smmxkfmynyofphclyguci"
   };
   console.log("Creating agent:", newAgent);
 

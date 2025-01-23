@@ -8,9 +8,8 @@ interface IIPFSStorage {
     /// @notice Pins an agent's CID to IPFS
     /// @param _cid The IPFS CID to pin
     /// @param _nftId The ID of the NFT that the caller must own
-    /// @param _owner The owner of the NFT
     /// @dev Caller must be the owner of the NFT with ID _nftId
-    function pinAgent(string memory _cid, uint256 _nftId, address _owner) external;
+    function pinAgent(string memory _cid, uint256 _nftId) external;
 
     /// @notice Pins a file to IPFS for a specified duration
     /// @param _cid The IPFS CID to pin

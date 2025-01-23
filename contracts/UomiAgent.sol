@@ -138,7 +138,7 @@ contract UomiAgent is
         agents[currentTokenId] = agent;
 
         //pin agent CID to IPFS
-        ipfsStorage.pinAgent(agent.agentCID, currentTokenId, msg.sender);
+        ipfsStorage.pinAgent(agent.agentCID, currentTokenId);
         _safeMint(to, currentTokenId);
     }
 
@@ -156,8 +156,7 @@ contract UomiAgent is
      */
     function updateAgent(
         uint256 tokenId,
-        Agent memory agent,
-        address owner
+        Agent memory agent
     ) public {
         require(bytes(agent.name).length > 0 && bytes(agent.name).length <= 16, "Invalid name length");
         require(bytes(agent.description).length <= 1000, "Description too long");
@@ -169,7 +168,7 @@ contract UomiAgent is
         );
 
         if (keccak256(abi.encodePacked(agent.agentCID)) != keccak256(abi.encodePacked(agents[tokenId].agentCID))) {
-            ipfsStorage.pinAgent(agent.agentCID, tokenId, owner);
+            ipfsStorage.pinAgent(agent.agentCID, tokenId);
         }
 
         agents[tokenId] = agent;

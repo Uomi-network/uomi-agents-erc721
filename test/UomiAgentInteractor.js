@@ -23,7 +23,7 @@ class UomiAgentInteractor {
                 agentCID: agent.agentCID
             },
             recipient,
-            { value: ethers.utils.parseEther("10") } // Assumendo un prezzo fisso di 0.1 ETH
+            { value: ethers.utils.parseEther("100") } // Assumendo un prezzo fisso di 0.1 ETH
         );
         return await tx.wait();
     }
