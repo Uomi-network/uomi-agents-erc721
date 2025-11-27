@@ -137,7 +137,11 @@ contract UomiAgent is
 
         agents[currentTokenId] = agent;
 
+<<<<<<< HEAD
         // pin agent CID to IPFS
+=======
+        //pin agent CID to IPFS
+>>>>>>> a8f209c92b81cfbe1f01a3e85a19f355ea3072f3
         ipfsStorage.pinAgent(agent.agentCID, currentTokenId);
         _safeMint(to, currentTokenId);
     }
