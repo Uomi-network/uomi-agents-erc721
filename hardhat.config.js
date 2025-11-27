@@ -21,7 +21,11 @@ module.exports = {
   solidity: {
     compilers: [
       {
-        version: "0.8.28",
+        version: "0.8.26",
+       
+      },
+      {
+        version: "0.8.22",
         settings: {
           optimizer: {
             enabled: true,
@@ -30,11 +34,11 @@ module.exports = {
         },
       },
       {
-        version: "0.8.0",
+        version: "0.4.18",
         settings: {
           optimizer: {
             enabled: true,
-            runs: 1,
+            runs: 200,
           },
         },
       },
@@ -51,7 +55,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
     },
     uomi: {
-      url: `https://finney.uomi.ai/`,
+      url: `https://turing-a.uomi.ai`,
       accounts: [process.env.PRIVATE_KEY],
     },
   },

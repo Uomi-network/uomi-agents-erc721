@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity 0.8.22;
 
 import {Base64} from "solady/src/utils/Base64.sol";
 import {LibString} from "solady/src/utils/LibString.sol";
@@ -137,8 +137,8 @@ contract UomiAgent is
 
         agents[currentTokenId] = agent;
 
-        //pin agent CID to IPFS
-        ipfsStorage.pinAgent(agent.agentCID, currentTokenId, msg.sender);
+        // pin agent CID to IPFS
+        ipfsStorage.pinAgent(agent.agentCID, currentTokenId);
         _safeMint(to, currentTokenId);
     }
 
@@ -156,8 +156,7 @@ contract UomiAgent is
      */
     function updateAgent(
         uint256 tokenId,
-        Agent memory agent,
-        address owner
+        Agent memory agent
     ) public {
         require(bytes(agent.name).length > 0 && bytes(agent.name).length <= 16, "Invalid name length");
         require(bytes(agent.description).length <= 1000, "Description too long");
@@ -169,7 +168,7 @@ contract UomiAgent is
         );
 
         if (keccak256(abi.encodePacked(agent.agentCID)) != keccak256(abi.encodePacked(agents[tokenId].agentCID))) {
-            ipfsStorage.pinAgent(agent.agentCID, tokenId, owner);
+            ipfsStorage.pinAgent(agent.agentCID, tokenId);
         }
 
         agents[tokenId] = agent;
@@ -212,6 +211,12 @@ contract UomiAgent is
         );
 
         emit RequestSent(msg.sender, requestId, bytes(inputData), nftId);
+    }
+
+    function getAgentWallet(
+        uint256 nftId
+    ) external view returns (address) {
+        return PRECOMPILE_ADDRESS_UOMI_ENGINE.get_agent_wallet(nftId);
     }
 
 
@@ -282,7 +287,7 @@ contract UomiAgent is
                         '"outputSchema":"', $.outputSchema, '",',
                         '"price":', LibString.toString($.price), ',',
                         '"nftId":', LibString.toString(tokenId), ',',
-                        '"minValidatiors":', LibString.toString($.minValidatiors), ',',
+                        '"minValidators":', LibString.toString($.minValidatiors), ',',
                         '"minBlocks":', LibString.toString($.minBlocks), ',',
                         '"image":"', image, '"}'
                     )

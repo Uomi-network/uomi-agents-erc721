@@ -23,7 +23,7 @@ class UomiAgentInteractor {
                 agentCID: agent.agentCID
             },
             recipient,
-            { value: ethers.utils.parseEther("10") } // Assumendo un prezzo fisso di 0.1 ETH
+            { value: ethers.utils.parseEther("100") } // Assumendo un prezzo fisso di 0.1 ETH
         );
         return await tx.wait();
     }
@@ -90,6 +90,10 @@ class UomiAgentInteractor {
     async cashOut() {
         const tx = await this.contract.cashOut();
         return await tx.wait();
+    }
+
+    async getIpfsStorage() {
+        return await this.contract.ipfsStorage();
     }
 }
 

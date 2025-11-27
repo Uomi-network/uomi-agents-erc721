@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity 0.8.22;
 /**
  * @title UOMI-ENGINE interface.
  */
@@ -30,4 +30,11 @@ interface IEngine {
      *         - A uint256 representing the second additional output value.
      */
     function get_agent_output(uint256 requestId) external view returns (bytes memory, uint256, uint256);
+    
+     /**
+     * @notice Retrieves the wallet address associated with a given NFT ID.
+     * @param nftId The unique identifier for the NFT.
+     * @return The address of the agent's wallet.
+     */
+    function get_agent_wallet(uint256 nftId) external view returns (address);
 }

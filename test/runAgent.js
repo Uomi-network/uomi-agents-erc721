@@ -5,7 +5,7 @@ async function main() {
   const interactor = new UomiAgentInteractor(PROVIDER_URL, PRIVATE_KEY);
 
   try {
-    const setTx = await interactor.callAgent(1, "", "Hello World!");
+    const setTx = await interactor.callAgent(6, "", "[{\"role\":\"user\",\"content\":\"ciao come stai\"}]");
     console.log("Agent run request sent correctly:", setTx.transactionHash);
   } catch (error) {
       console.error("Error:", error);

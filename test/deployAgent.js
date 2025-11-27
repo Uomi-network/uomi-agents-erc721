@@ -5,16 +5,16 @@ async function main() {
   const interactor = new UomiAgentInteractor(PROVIDER_URL, PRIVATE_KEY);
 
   const newAgent = {
-    name: "Test Agent",
-    description: "Un agente di test",
+    name: "Whitepaper agent",
+    description: "Uomi agent can explain the Uomi project",
     inputSchema: "{}",
     outputSchema: "{}",
-    tags: ["test", "demo"],
+    tags: ["whitepaper", "ai"],
     price: 0,
-    minValidators: 1,
-    minBlocks: 50,
-    agentCID: "bafkreihw3bk5wfh7sxrumbn3ul2tthddy55ryvrp443dibvd2zo2enmdbm"
-  };
+    minValidators: 3,
+    minBlocks: 20,
+    agentCID: "bafkreier2hbqc2zefn5t54zlot3tolzf3jek6yyqs5d2yxok3dufgqxsie"
+};
   console.log("Creating agent:", newAgent);
 
   try {
